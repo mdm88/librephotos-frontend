@@ -1,0 +1,28 @@
+{
+  "name": "LibrePhotos",
+  "short_name": "LibrePhotos",
+  "start_url": "/",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "icons/ico-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/ico-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/ico-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/ico-192x192.png",
+      "sizes": "168x168",
+      "type": "image/png"
+    }
+  ]
+}
