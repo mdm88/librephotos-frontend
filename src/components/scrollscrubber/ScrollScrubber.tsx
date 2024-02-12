@@ -36,6 +36,7 @@ export function ScrollScrubber({ type, scrollPositions, targetHeight, scrollToY,
   const [offsetTop, setOffsetTop] = useState(0);
   const previousScrollPosition = useRef(NaN);
   const targetRef = useRef<Element | null>(null);
+  const throttledScrollToY = _.throttle(scrollToY, 250);
 
   const targetYToScrollerY = (y: number): number => {
     if (targetHeight > 0) return Math.min((y * height) / (targetHeight - targetClientHeight), height);
@@ -285,7 +286,7 @@ export function ScrollScrubber({ type, scrollPositions, targetHeight, scrollToY,
     // Primary button pressed
     if (e.buttons % 2 !== 0) {
       setCurrentScrollPosMarkerY(mouseY);
-      scrollToY(scrollerYToTargetY(mouseY));
+      throttledScrollToY(scrollerYToTargetY(mouseY));
     }
   };
 
@@ -301,7 +302,7 @@ export function ScrollScrubber({ type, scrollPositions, targetHeight, scrollToY,
     setDragMarkerY(mouseY + 1);
 
     setCurrentScrollPosMarkerY(mouseY);
-    scrollToY(scrollerYToTargetY(mouseY));
+    throttledScrollToY(scrollerYToTargetY(mouseY));
   };
 
   const detectScrolling = (y: number, previousY: number) => {
