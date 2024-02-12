@@ -36,6 +36,7 @@ export function ScrollScrubber({ type, scrollPositions, targetHeight, scrollToY,
   const [offsetTop, setOffsetTop] = useState(0);
   const previousScrollPosition = useRef(NaN);
   const targetRef = useRef<Element | null>(null);
+  const throttledScrollToY = _.throttle(scrollToY, 250);
 
   const targetYToScrollerY = (y: number): number => {
     if (targetHeight > 0) return Math.min((y * height) / (targetHeight - targetClientHeight), height);
@@ -263,45 +264,70 @@ export function ScrollScrubber({ type, scrollPositions, targetHeight, scrollToY,
 
   const handleMouseEnter = () => {
     showScrollerScrubber();
+    setCursor("pointer");
+    setDragMarkerIsVisible(true);
   };
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    resetScrollerVisibilityTimer();
     const rect = e.currentTarget.getBoundingClientRect();
     const mouseY = Math.max(Math.min(e.clientY - rect.top, rect.height), 0);
-    const distanceFromRight = rect.right - e.clientX;
-    if (distanceFromRight < 30) {
-      setCursor("pointer");
-      setDragMarkerIsVisible(true);
-      setCurrentLabel(getLabelForScrollerY(mouseY));
-    } else {
-      setCursor("auto");
-      setDragMarkerIsVisible(false);
-      setCurrentLabel("");
-    }
+
+    resetScrollerVisibilityTimer();
+
+    setCurrentLabel(getLabelForScrollerY(mouseY));
     // "+ 1" to match exactly currentScrollPosMarkerY on click
     setDragMarkerY(mouseY + 1);
+
+    // Primary button pressed
+    if (e.buttons % 2 !== 0) {
+      setCurrentScrollPosMarkerY(mouseY);
+      throttledScrollToY(scrollerYToTargetY(mouseY));
+    }
   };
 
-  const handleMouseClick = (e: MouseEvent<HTMLDivElement>) => {
+  const handleMouseLeave = (e: MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const mouseY = Math.max(Math.min(e.clientY - rect.top, rect.height), 0);
-    const distanceFromRight = rect.right - e.clientX;
-    if (distanceFromRight < 30) {
-      setCurrentScrollPosMarkerY(mouseY);
-      scrollToY(scrollerYToTargetY(mouseY));
-    }
+
+    setCursor("auto");
+    setDragMarkerIsVisible(false);
+    setCurrentLabel("");
+
+    setCurrentScrollPosMarkerY(mouseY);
+    scrollToY(scrollerYToTargetY(mouseY));
+  };
+
+  const handleTouch = (e: React.TouchEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mouseY = Math.max(Math.min(e.targetTouches[0].clientY - rect.top, rect.height), 0);
+
+    resetScrollerVisibilityTimer();
+
+    setDragMarkerIsVisible(true);
+    setCurrentLabel(getLabelForScrollerY(mouseY));
+    // "+ 1" to match exactly currentScrollPosMarkerY on click
+    setDragMarkerY(mouseY + 1);
+
+    setCurrentScrollPosMarkerY(mouseY);
+    throttledScrollToY(scrollerYToTargetY(mouseY));
+  };
+
+  const handleTouchLeave = (e: React.TouchEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mouseY = Math.max(Math.min(e.targetTouches[0].clientY - rect.top, rect.height), 0);
+
+    setDragMarkerIsVisible(false);
+    setCurrentLabel("");
+
+    setCurrentScrollPosMarkerY(mouseY);
+    scrollToY(scrollerYToTargetY(mouseY));
   };
 
   const detectScrolling = (y: number, previousY: number) => {
     if (!Number.isNaN(previousY)) {
       const delta = Math.abs(previousY - y);
       if (delta > 600) {
-        if (!scrollerIsVisible) {
-          showScrollerScrubber();
-        } else {
-          resetScrollerVisibilityTimer();
-        }
+        showScrollerScrubber();
       }
     }
     previousScrollPosition.current = y;
@@ -459,7 +485,10 @@ export function ScrollScrubber({ type, scrollPositions, targetHeight, scrollToY,
         })}
         onMouseEnter={handleMouseEnter}
         onMouseMove={handleMouseMove}
-        onClick={handleMouseClick}
+        onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouch}
+        onTouchMove={handleTouch}
+        onTouchEnd={handleTouchLeave}
       >
         {renderMarkers()}
         {renderMarkersLines()}
