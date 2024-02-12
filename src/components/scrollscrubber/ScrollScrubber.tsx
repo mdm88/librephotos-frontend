@@ -267,11 +267,6 @@ export function ScrollScrubber({ type, scrollPositions, targetHeight, scrollToY,
     setCursor("pointer");
     setDragMarkerIsVisible(true);
   };
-  const handleMouseLeave = () => {
-    setCursor("auto");
-    setDragMarkerIsVisible(false);
-    setCurrentLabel("");
-  };
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -290,6 +285,18 @@ export function ScrollScrubber({ type, scrollPositions, targetHeight, scrollToY,
     }
   };
 
+  const handleMouseLeave = (e: MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mouseY = Math.max(Math.min(e.clientY - rect.top, rect.height), 0);
+
+    setCursor("auto");
+    setDragMarkerIsVisible(false);
+    setCurrentLabel("");
+
+    setCurrentScrollPosMarkerY(mouseY);
+    scrollToY(scrollerYToTargetY(mouseY));
+  };
+
   const handleTouch = (e: React.TouchEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const mouseY = Math.max(Math.min(e.targetTouches[0].clientY - rect.top, rect.height), 0);
@@ -303,6 +310,17 @@ export function ScrollScrubber({ type, scrollPositions, targetHeight, scrollToY,
 
     setCurrentScrollPosMarkerY(mouseY);
     throttledScrollToY(scrollerYToTargetY(mouseY));
+  };
+
+  const handleTouchLeave = (e: React.TouchEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mouseY = Math.max(Math.min(e.targetTouches[0].clientY - rect.top, rect.height), 0);
+
+    setDragMarkerIsVisible(false);
+    setCurrentLabel("");
+
+    setCurrentScrollPosMarkerY(mouseY);
+    scrollToY(scrollerYToTargetY(mouseY));
   };
 
   const detectScrolling = (y: number, previousY: number) => {
@@ -470,7 +488,7 @@ export function ScrollScrubber({ type, scrollPositions, targetHeight, scrollToY,
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouch}
         onTouchMove={handleTouch}
-        onTouchEnd={() => setDragMarkerIsVisible(false)}
+        onTouchEnd={handleTouchLeave}
       >
         {renderMarkers()}
         {renderMarkersLines()}
