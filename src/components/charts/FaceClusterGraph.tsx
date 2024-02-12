@@ -2,16 +2,15 @@ import { Image, Loader, Stack, Text, Title } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import useDimensions from "react-cool-dimensions";
 import { useTranslation } from "react-i18next";
+import { Hint, HorizontalGridLines, MarkSeries, VerticalGridLines, XYPlot } from "react-vis";
 
 import { api } from "../../api_client/api";
 import { serverAddress } from "../../api_client/apiClient";
 import { useAppDispatch, useAppSelector } from "../../store/store";
 
-const { XYPlot, HorizontalGridLines, Hint, MarkSeries, VerticalGridLines } = require("react-vis");
-
-type Props = {
+type Props = Readonly<{
   height: number;
-};
+}>;
 
 export function FaceClusterGraph({ height }: Props) {
   const [hintValue, setHintValue] = useState<any>({} as any);

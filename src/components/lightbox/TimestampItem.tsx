@@ -17,11 +17,12 @@ import { editPhoto } from "../../actions/photosActions";
 import { i18nResolvedLanguage } from "../../i18n";
 import { useAppDispatch } from "../../store/store";
 
-type Props = {
+type Props = Readonly<{
   photoDetail: any;
-};
+  isPublic: boolean;
+}>;
 
-export function TimestampItem({ photoDetail }: Props) {
+export function TimestampItem({ photoDetail, isPublic }: Props) {
   const [timestamp, setTimestamp] = useState(
     photoDetail.exif_timestamp === null ? null : new Date(photoDetail.exif_timestamp)
   );
@@ -33,7 +34,10 @@ export function TimestampItem({ photoDetail }: Props) {
 
   const { t } = useTranslation();
   const lang = i18nResolvedLanguage();
-  import(`dayjs/locale/${lang}.js`);
+  import(
+    /* @vite-ignore */
+    `dayjs/locale/${lang}.js`
+  );
 
   const dispatch = useAppDispatch();
 
@@ -135,7 +139,17 @@ export function TimestampItem({ photoDetail }: Props) {
       {!editMode && (
         <Group>
           <Calendar />
-          <Button color="dark" variant="subtle" onClick={onActivateEditMode} rightIcon={<Edit size={17} />}>
+          <Button
+            color="dark"
+            variant="subtle"
+            onClick={() => {
+              if (isPublic) {
+                return;
+              }
+              onActivateEditMode();
+            }}
+            rightIcon={!isPublic && <Edit size={17} />}
+          >
             {getDateTimeLabel()}
           </Button>
           {savedTimestamp !== timestamp && (

@@ -16,12 +16,12 @@ import { playerActions } from "../../store/player/playerSlice";
 import { useAppDispatch, useAppSelector } from "../../store/store";
 import { copyToClipboard } from "../../util/util";
 
-type Props = {
+type Props = Readonly<{
   photosDetail: any;
   isPublic: boolean;
   lightboxSidebarShow: boolean;
   closeSidepanel: () => void;
-};
+}>;
 
 export function Toolbar(props: Props) {
   const dispatch = useAppDispatch();
@@ -50,25 +50,24 @@ export function Toolbar(props: Props) {
 
   return (
     <Group style={{ paddingBottom: 10, paddingRight: 5 }}>
-      {!photosDetail && (
-        <ActionIcon loading disabled={isPublic}>
+      {!photosDetail && !isPublic && (
+        <ActionIcon loading>
           <Eye color="grey" />
         </ActionIcon>
       )}
-      {!photosDetail && (
-        <ActionIcon loading disabled={isPublic}>
+      {!photosDetail && !isPublic && (
+        <ActionIcon loading>
           <Star color="grey" />
         </ActionIcon>
       )}
-      {!photosDetail && (
-        <ActionIcon loading disabled={isPublic}>
+      {!photosDetail && !isPublic && (
+        <ActionIcon loading>
           <Globe color="grey" />
         </ActionIcon>
       )}
       {playButton(photosDetail)}
-      {photosDetail && (
+      {photosDetail && !isPublic && (
         <ActionIcon
-          disabled={isPublic}
           onClick={() => {
             const { image_hash: imageHash } = photosDetail;
             const val = !photosDetail.hidden;
@@ -78,9 +77,8 @@ export function Toolbar(props: Props) {
           {photosDetail.hidden ? <EyeOff color="red" /> : <Eye color="grey" />}
         </ActionIcon>
       )}
-      {photosDetail && (
+      {photosDetail && !isPublic && (
         <ActionIcon
-          disabled={isPublic}
           onClick={() => {
             const { image_hash: imageHash } = photosDetail;
             const val = !(photosDetail.rating >= favoriteMinRating);
@@ -90,9 +88,8 @@ export function Toolbar(props: Props) {
           <Star color={photosDetail.rating >= favoriteMinRating ? "yellow" : "grey"} />
         </ActionIcon>
       )}
-      {photosDetail && (
+      {photosDetail && !isPublic && (
         <ActionIcon
-          disabled={isPublic}
           onClick={() => {
             const { image_hash: imageHash } = photosDetail;
             const val = !photosDetail.public;

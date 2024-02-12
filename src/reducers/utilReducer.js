@@ -11,10 +11,6 @@ const initialState = {
   fetchingSiteSettings: false,
   fetchedSiteSettings: false,
 
-  countStats: {},
-  fetchingCountStats: false,
-  fetchedCountStats: false,
-
   photoMonthCounts: [],
   fetchingPhotoMonthCounts: false,
   fetchedPhotoMonthCounts: false,
@@ -37,10 +33,6 @@ const initialState = {
   exampleSearchTerms: [],
   fetchingExampleSearchTerms: false,
   fetchedExampleSearchTerms: false,
-
-  locationSunburst: { name: "Loading..." },
-  fetchingLocationSunburst: false,
-  fetchedLocationSunburst: false,
 
   locationTimeline: [],
   fetchingLocationTimeline: false,
@@ -67,8 +59,6 @@ const initialState = {
   fetchedJobList: false,
 
   error: null,
-  fetchingTimezones: false,
-  timezoneList: [],
 };
 
 export default function reducer(state = initialState, action = DEFAULT_ACTION) {
@@ -228,25 +218,6 @@ export default function reducer(state = initialState, action = DEFAULT_ACTION) {
       };
     }
 
-    case "FETCH_LOCATION_SUNBURST": {
-      return { ...state, fetchingLocationSunburst: true };
-    }
-    case "FETCH_LOCATION_SUNBURST_REJECTED": {
-      return {
-        ...state,
-        fetchingLocationSunburst: false,
-        error: action.payload,
-      };
-    }
-    case "FETCH_LOCATION_SUNBURST_FULFILLED": {
-      return {
-        ...state,
-        fetchingLocationSunburst: false,
-        fetchedLocationSunburst: true,
-        locationSunburst: action.payload,
-      };
-    }
-
     case "FETCH_EXAMPLE_SEARCH_TERMS": {
       return { ...state, fetchingExampleSearchTerms: true };
     }
@@ -266,34 +237,6 @@ export default function reducer(state = initialState, action = DEFAULT_ACTION) {
       };
     }
 
-    case "FETCH_TIMEZONE_LIST": {
-      return { ...state, fetchingTimezones: true };
-    }
-    case "FETCH_TIMEZONE_LIST_REJECTED": {
-      return { ...state, fetchingTimezones: false, error: action.payload };
-    }
-    case "FETCH_TIMEZONE_LIST_FULFILLED": {
-      return {
-        ...state,
-        fetchingTimezones: false,
-        timezoneList: JSON.parse(action.payload),
-      };
-    }
-    case "FETCH_COUNT_STATS": {
-      return { ...state, fetchingCountStats: true };
-    }
-    case "FETCH_COUNT_STATS_REJECTED": {
-      return { ...state, fetchingCountStats: false, error: action.payload };
-    }
-    case "FETCH_COUNT_STATS_FULFILLED": {
-      return {
-        ...state,
-        fetchingCountStats: false,
-        fetchedCountStats: true,
-        countStats: action.payload,
-      };
-    }
-
     case "FETCH_LOCATION_CLUSTERS": {
       return { ...state, fetchingLocationClusters: true };
     }
@@ -310,25 +253,6 @@ export default function reducer(state = initialState, action = DEFAULT_ACTION) {
         fetchingLocationClusters: false,
         fetchedLocationClusters: true,
         locationClusters: action.payload,
-      };
-    }
-
-    case "FETCH_PHOTO_MONTH_COUNTS": {
-      return { ...state, fetchingPhotoMonthCounts: true };
-    }
-    case "FETCH_PHOTO_MONTH_COUNTS_REJECTED": {
-      return {
-        ...state,
-        fetchingPhotoMonthCounts: false,
-        error: action.payload,
-      };
-    }
-    case "FETCH_PHOTO_MONTH_COUNTS_FULFILLED": {
-      return {
-        ...state,
-        fetchingPhotoMonthCounts: false,
-        fetchedPhotoMonthCounts: true,
-        photoMonthCounts: action.payload,
       };
     }
 

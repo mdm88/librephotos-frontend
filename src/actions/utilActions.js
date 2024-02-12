@@ -3,14 +3,7 @@ import { Server } from "../api_client/apiClient";
 import { notification } from "../service/notifications";
 import { UserSchema } from "../store/user/user.zod";
 import { userActions } from "../store/user/userSlice";
-import {
-  CountStats,
-  DeleteMissingPhotosResponse,
-  GenerateEventAlbumsTitlesResponse,
-  LocationSunburst,
-  PhotoMonthCount,
-  WordCloudResponse,
-} from "./utilActions.types";
+import { DeleteMissingPhotosResponse, GenerateEventAlbumsTitlesResponse } from "./utilActions.types";
 
 export function updateAvatar(user, form_data) {
   return function cb(dispatch) {
@@ -94,79 +87,4 @@ export function generateEventAlbumTitles() {
         });
       });
   };
-}
-
-export function fetchLocationSunburst() {
-  return function cb(dispatch) {
-    dispatch({ type: "FETCH_LOCATION_SUNBURST" });
-    Server.get(`locationsunburst/`)
-      .then(response => {
-        const data = LocationSunburst.parse(response.data);
-        dispatch({
-          type: "FETCH_LOCATION_SUNBURST_FULFILLED",
-          payload: data,
-        });
-      })
-      .catch(err => {
-        dispatch({ type: "FETCH_LOCATION_SUNBURST_REJECTED", payload: err });
-      });
-  };
-}
-
-export function fetchTimezoneList(dispatch) {
-  dispatch({ type: "FETCH_TIMEZONE_LIST" });
-  Server.get(`timezones/`)
-    .then(response => {
-      dispatch({
-        type: "FETCH_TIMEZONE_LIST_FULFILLED",
-        payload: response.data,
-      });
-    })
-    .catch(err => {
-      dispatch({ type: "FETCH_TIMEZONE_LIST_REJECTED", payload: err });
-    });
-}
-
-export function fetchCountStats() {
-  return function cb(dispatch) {
-    dispatch({ type: "FETCH_COUNT_STATS" });
-    Server.get(`stats/`)
-      .then(response => {
-        const data = CountStats.parse(response.data);
-        dispatch({
-          type: "FETCH_COUNT_STATS_FULFILLED",
-          payload: data,
-        });
-      })
-      .catch(err => {
-        dispatch({ type: "FETCH_COUNT_STATS_REJECTED", payload: err });
-      });
-  };
-}
-
-export function fetchPhotoMonthCounts(dispatch) {
-  dispatch({ type: "FETCH_PHOTO_MONTH_COUNTS" });
-  Server.get(`photomonthcounts/`)
-    .then(response => {
-      const data = PhotoMonthCount.array().parse(response.data);
-      dispatch({
-        type: "FETCH_PHOTO_MONTH_COUNTS_FULFILLED",
-        payload: data,
-      });
-    })
-    .catch(err => {
-      dispatch({ type: "FETCH_PHOTO_MONTH_COUNTS_REJECTED", payload: err });
-    });
-}
-
-export function fetchWordCloud(dispatch) {
-  dispatch({ type: "FETCH_WORDCLOUD" });
-  Server.get(`wordcloud/`)
-    .then(response => {
-      const data = WordCloudResponse.parse(response.data);
-      dispatch({ type: "FETCH_WORDCLOUD_FULFILLED", payload: data });
-    })
-    .catch(err => {
-      dispatch({ type: "FETCH_WORDCLOUD_REJECTED", payload: err });
-    });
 }
